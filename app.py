@@ -23,11 +23,14 @@ def chat():
         return jsonify({"error": "Query is required"}), 400
 
     try:
-        response = openai.chat.completions.create( 
+        # Use the correct OpenAI method
+        response = openai.ChatCompletion.create(
             model=FINETUNED_MODEL,
             messages=[{"role": "user", "content": query}]
         )
-        return jsonify({"response": response['choices'][0]['message']["content"]})
+        # Access the response correctly
+        response_content = response['choices'][0]['message']['content']
+        return jsonify({"response": response_content})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
