@@ -15,5 +15,4 @@ def validate_jsonl(file_path):
         print(f"Error while validating file: {e}")
         return False
 
-# Validate the JSONL file
 validate_jsonl('./kaggle_data/train.jsonl')
