@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Chatbox</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #4C585B;
+      }
+      .chatbox {
+        width: 600px;
+        max-width: 100%;
+        border: 1px solid #ddd;
+        padding: 10px;
+        background: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .messages {
+        height: 300px;
+        overflow-y: auto;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 10px;
+        padding: 5px;
+      }
+      .input-area {
+        display: flex;
+      }
+      input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px;
+        border: none;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      h1 {
+        color: white;
+        margin-bottom: 20px;
+      }
+      p {
+        color: white;
+        margin-bottom: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CrytoChatbox</h1>
+    <p style="text-align: center">
+      Ask all your questions related to cryptocurrencies </br> and check
+      <a href="https://nathanael-durst.com/links.html" target="_blank"
+        >this link</a
+      >
+      to see the complete project.
+    </p>
+    <div class="chatbox">
+      <div class="messages" id="messages"></div>
+      <div class="input-area">
+        <input type="text" id="query" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+    <script>
+      async function sendMessage() {
+        const query = document.getElementById("query").value;
+        if (!query) return;
+
+        const messagesDiv = document.getElementById("messages");
+        messagesDiv.innerHTML += `<p><strong>You:</strong> ${query}</p>`;
+        document.getElementById("query").value = "";
+
+        try {
+          const response = await fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query }),
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+            messagesDiv.innerHTML += `<p><strong>AI:</strong> ${data.response}</p>`;
+          } else {
+            messagesDiv.innerHTML += `<p><strong>Error:</strong> ${data.error}</p>`;
+          }
+        } catch (error) {
+          messagesDiv.innerHTML += `<p><strong>Error:</strong> Unable to connect to the server.</p>`;
+        }
+
+        // Scroll to the bottom
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+    </script>
+  </body>
+</html>

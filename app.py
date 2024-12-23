@@ -1,19 +1,17 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
-# Load environment variables
 load_dotenv()
-app = Flask(__name__)
+app = Flask(__name__,template_folder="templates")
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# Fine-tuned model ID
 FINETUNED_MODEL = "ft:gpt-3.5-turbo-0125:personal:cryptomarket:AfGQeLb8"
 
 @app.route("/")
 def home():
-    return "Hello, PTDS class!"
+    return render_template("index.html")
 
 
 @app.route('/chat', methods=['POST'])
@@ -24,12 +22,10 @@ def chat():
         return jsonify({"error": "Query is required"}), 400
 
     try:
-        # Use the fine-tuned model
         response = client.chat.completions.create(
             model=FINETUNED_MODEL,
             messages=[{"role": "user", "content": query}]
         )
-        # Access the response content properly
         response_content = response.choices[0].message.content
         return jsonify({"response": response_content})
     except Exception as e:
